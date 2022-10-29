@@ -11,10 +11,26 @@ import GoogleSignIn
 
 class ViewController: UIViewController {
     @IBOutlet weak var gSingInButton: GIDSignInButton!
+    @IBOutlet weak var statusLabel: UILabel!
     
+    @IBOutlet weak var signOutBtn: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        Auth.auth().addStateDidChangeListener { auth, user in
+            if let user = user{
+                self.statusLabel.text = "歡迎：" + (user.displayName ?? "未知")
+                self.signOutBtn.isEnabled = true
+                self.gSingInButton.isEnabled = false
+            }else{
+                self.statusLabel.text = "未登入"
+                self.signOutBtn.isEnabled = false
+                self.gSingInButton.isEnabled = true
+            }
+        }
+        
+        
+        
+        
     }
     
     @IBAction func gSingAction(_ sender: Any) {
@@ -53,6 +69,19 @@ class ViewController: UIViewController {
         }
         
     }
+    
+    
+    @IBAction func singOut(_ sender: Any) {
+        do{
+            try Auth.auth().signOut()
+        }catch{
+            print(error.localizedDescription)
+        }
+        
+    }
+    
+    
+    
 }
 
 
